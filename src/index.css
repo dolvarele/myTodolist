@@ -47,6 +47,16 @@ h1 {
   color: #fff;
 }
 
+.date-label {
+  outline: none;
+  background: none;
+  padding: 0.5rem 1rem;
+  margin-top: 1rem;
+  margin-bottom: 2rem;
+  width: 300px;
+  color: #fff;
+}
+
 .todo-input::placeholder {
   color: #ffffff4d;
 }
@@ -58,6 +68,32 @@ h1 {
   padding: 0.55rem;
   cursor: pointer;
 }
+
+.DatePicker {
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+
+
+.selectdate-btn {
+  background: #df1e8f;
+  color: #fff;
+  border: none;
+  padding: 0.55rem;
+  cursor: pointer;
+}
+
+
+.status-btn {
+  background: #58ff7f;
+  color: #fff;
+  border: none;
+  padding: 0.55rem;
+  cursor: pointer;
+}
+
+
 
 .Todo {
   display: flex;
@@ -85,8 +121,19 @@ h1 {
   cursor: pointer;
 }
 
-.edit-icon,
-.delete-icon {
+.edit-btn{
+  background: #eb770a;
+  color: #fff;
+  border: none;
+  padding: 0.55rem;
+  cursor: pointer;
+}
+
+.delete-btn {
+  background: #ef170f;
+  color: #fff;
+  border: none;
+  padding: 0.55rem;
   cursor: pointer;
 }
  
