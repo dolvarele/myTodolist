@@ -16,6 +16,9 @@ function App() {
   //*************************************TodoWrapperLocalStorage******************************************
   export const TodoWrapperLocalStorage = () => {
     const [todos, setTodos] = useState([]);
+    const [filteredTodos, setFilteredTodos] = useState([]);
+    const [showFilteredTodos, setShowFilteredTodos] = useState(false); // Ajout d'une variable de contrôle
+
      const id = crypto.randomUUID();
   
     useEffect(() => {
@@ -32,12 +35,32 @@ function App() {
           completed: false,
           isEditing: false,
           status: status,
+          day: new Date().toISOString().split("T")[0], // Ajouter la propriété "day" avec la date actuelle
+        },
+      ];
+      //console.log(newTodos);
+      setTodos(newTodos);
+      localStorage.setItem('todos', JSON.stringify(newTodos));
+
+      setShowFilteredTodos(false); // Réinitialise la variable de contrôle lors de l'ajout d'une nouvelle tâche
+    };
+
+    /*const addTodo = (todo, status) => {
+      const newTodos = [
+        ...todos,
+        {
+          id: id,
+          task: todo,
+          completed: false,
+          isEditing: false,
+          status: status,
         },
       ];
       setTodos(newTodos);
       localStorage.setItem('todos', JSON.stringify(newTodos));
-    };
-  
+    };*/
+    
+
     const toggleComplete = (id) => {
       const newTodos = todos.map((todo) =>
         todo.id === id ? { ...todo, completed: !todo.completed } : todo
@@ -50,6 +73,7 @@ function App() {
       const newTodos = todos.filter((todo) => todo.id !== id);
       setTodos(newTodos);
       localStorage.setItem('todos', JSON.stringify(newTodos));
+      //console.log(deleteTodo);
     };
   
     const editTodo = (id) => {
@@ -58,8 +82,20 @@ function App() {
           todo.id === id ? { ...todo, isEditing: !todo.isEditing } : todo
         )
       );
+      //console.log(editTodo);
+      setShowFilteredTodos(false); // Réinitialise la variable de contrôle lors de la modification d'une nouvelle tâche
     };
   
+    /*const editTask = (task, id, status) => {
+      const newTodos = todos.map((todo) =>
+        todo.id === id
+          ? { ...todo, task, status, day: new Date().toISOString().split("T")[0] } // Mettre à jour "day" avec la date actuelle
+          : todo
+      );
+      setTodos(newTodos);
+      localStorage.setItem('todos', JSON.stringify(newTodos));
+    };*/
+
     const editTask = (task, id , status) => {
       const newTodos = todos.map((todo) =>
         todo.id === id ? { ...todo, task,status, isEditing: !todo.isEditing } : todo
@@ -68,6 +104,7 @@ function App() {
       localStorage.setItem('todos', JSON.stringify(newTodos));
     };
   
+
     const changeStatus = (status, id) => {
       const newTodos = todos.map((todo) =>
         todo.id === id ? { ...todo, status } : todo
@@ -76,20 +113,41 @@ function App() {
       localStorage.setItem('todos', JSON.stringify(newTodos));
     };
   
+    /*const filterByDay = (day) => {
+      if (day === "") {
+        setFilteredTodos(todos);
+      } else {
+        const filteredTodos = todos.filter((todo) => todo.day === day);
+        setFilteredTodos(filteredTodos);
+      }
+    };*/
+
     const filterByDay = (day) => {
-      const filteredTodos = todos.filter((todo) => {
-        const todoDate = new Date(todo.day);
-        return todoDate.getDay() === day;
-      });
-      return filteredTodos;
+      if (day === "") {
+        setFilteredTodos(todos);
+      } else if (day === "Today") {
+        const today = new Date().toISOString().split("T")[0];
+        const filteredTodos = todos.filter((todo) => todo.day === today);
+        setFilteredTodos(filteredTodos);
+      } else if (day === "Yesterday") {
+        const yesterday = new Date(Date.now() - 86400000).toISOString().split("T")[0];
+        const filteredTodos = todos.filter((todo) => todo.day === yesterday);
+        setFilteredTodos(filteredTodos);
+      } else {
+        const filteredTodos = todos.filter((todo) => todo.day === day);
+        setFilteredTodos(filteredTodos);
+      }
+    
+      setShowFilteredTodos(true); // Active la variable de contrôle lors de la sélection d'un jour
     };
-  
     return (
-      <div className="TodoWrapper">
-        <h1>Get Things Done!</h1>
-        <TodoForm addTodo={addTodo} />
-        <DatePicker filterByDay={filterByDay} /> {/* Nouveau composant pour sélectionner les jours */}
-        {todos.map((todo, index) =>
+    <div className="TodoWrapper">
+      <h1>Get Things Done!</h1>
+      <TodoForm addTodo={addTodo} />
+      <DatePicker filterByDay={filterByDay} />
+
+      {showFilteredTodos ? (
+        filteredTodos.map((todo, index) =>
           todo.isEditing ? (
             <EditTodoForm editTodo={editTask} task={todo} />
           ) : (
@@ -99,13 +157,30 @@ function App() {
               toggleComplete={toggleComplete}
               deleteTodo={deleteTodo}
               editTodo={editTodo}
-              changeStatus={changeStatus} // Nouvelle fonction pour changer le statut
+              changeStatus={changeStatus}
             />
           )
-        )}
+        )
+      ) : (
+        todos.map((todo, index) =>
+          todo.isEditing ? (
+            <EditTodoForm editTodo={editTask} task={todo} />
+          ) : (
+            <Todo
+              task={todo}
+              key={index}
+              toggleComplete={toggleComplete}
+              deleteTodo={deleteTodo}
+              editTodo={editTodo}
+              changeStatus={changeStatus}
+            />
+          )
+        )
+      )}
       </div>
     );
   };
+
   
   
   //************************************* */ todo******************************************
@@ -156,6 +231,7 @@ function App() {
       />
       <button type="submit" className='todo-btn'>Add Task</button>
       <Status initialStatus={status} onChange={handleStatusChange} />
+      
     </form>
   )
 }
@@ -184,7 +260,7 @@ export const EditTodoForm = ({editTodo, task}) => {
         className="todo-input" 
         placeholder='Update task'
       />
-      <button type="submit" className='todo-btn'>Add Task</button>
+      <button type="submit" className='todo-btn'>Modify</button>
       <Status initialStatus={status} onChange={handleStatusChange} />
     </form>
   )
@@ -212,31 +288,45 @@ const Status = ({ initialStatus, onChange }) => {
 //*************************************************DatePicker************************************************ */
 
 export const DatePicker = ({ filterByDay }) => {
-  const [selectedDay, setSelectedDay] = useState(null);
+  const [selectedDay, setSelectedDay] = useState();
 
-  const handleDaySelection = (e) => {
+  const dayValues = {
+    Sunday: 0,
+    Monday: 1,
+    Tuesday: 2,
+    Wednesday: 3,
+    Thursday: 4,
+    Friday: 5,
+    Saturday: 6,
+  };
+
+ const handleDaySelection = (e) => {
     const selectedDay = e.target.value;
     setSelectedDay(selectedDay);
-    if (selectedDay) {
-      const day = new Date(selectedDay).getDay();
-      filterByDay(day);
-    }
+    filterByDay(selectedDay);
   };
+
+  /*const handleDaySelection = (e) => {
+    const selectedDay = e.target.value;
+    setSelectedDay(selectedDay);
+    const dayValue = dayValues[selectedDay]; // Récupère la valeur numérique correspondante au jour sélectionné
+    filterByDay(dayValue);
+  };*/
 
   return (
     <div className="DatePicker">
       <label htmlFor="dayPicker" className="date-label">Select a day:</label>
       <select className="selectdate-btn" id="dayPicker" onChange={handleDaySelection}>
         <option value="">All</option>
-        <option value={new Date().toISOString()}>Today</option>
-        <option value={new Date(Date.now() + 86400000).toISOString()}>Tomorrow</option>
-        <option value='Monday'>Monday</option>
-        <option value='Tuesday'>Tuesday</option>
-        <option value='Wednesday'>Wednesday</option>
-        <option value='Thursday'>Thursday</option>
-        <option value='Friday'>Friday</option>
-        <option value='Saturday'>Saturday</option>
-        <option value='Sunday'>Sunday</option>
+        <option value={new Date().toISOString().split("T")[0]}>Today</option>
+        <option value={new Date(Date.now() - 86400000).toISOString().split("T")[0]}>Yesterday</option>
+        <option value="Monday">Monday</option>
+        <option value="Tuesday">Tuesday</option>
+        <option value="Wednesday">Wednesday</option>
+        <option value="Thursday">Thursday</option>
+        <option value="Friday">Friday</option>
+        <option value="Saturday">Saturday</option>
+        <option value="Sunday">Sunday</option>
         {/* Add more options for different days */}
       </select>
     </div>
