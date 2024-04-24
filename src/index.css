@@ -23,12 +23,16 @@ h1 {
   margin-bottom: 0.5rem;
   font-size: 1.75rem;
 }
+h2{
+  color: #fff;
+}
 
 .TodoWrapper {
   background: #1A1A40;
   margin-top: 5rem;
   padding: 2rem;
   border-radius: 5px;
+  width: 50rem;
 }
 
 .TodoForm {
@@ -47,11 +51,65 @@ h1 {
   color: #fff;
 }
 
+.todo-textarea{
+  outline: none;
+  background: none;
+  border: 1px solid #8758ff;
+  padding: 0.5rem 1rem;
+  margin-top: 1rem;
+  margin-bottom: 2rem;
+  width: 300px;
+  color: #fff;
+}
+
+.input-time{
+  outline: none;
+  background: none;
+  border: 1px solid #8758ff;
+  padding: 0.5rem 1rem;
+  margin-top: 1rem;
+  margin-bottom: 2rem;
+  width: 100px;
+  color: #fff;
+}
+.modal{
+  border: 1px solid #ddda13;
+}
+
+.descrip{
+  display: flex;
+  margin-left: 10.5rem;
+}
+.myfilter{
+  display: flex;
+  margin-right: 9rem;
+  padding-bottom: 2rem;
+  height: 4rem;
+}
+
 .date-label {
   outline: none;
   background: none;
   padding: 0.5rem 1rem;
   margin-top: 1rem;
+  margin-bottom: 2rem;
+  width: 300px;
+  color: #fff;
+}
+
+.status-label {
+  outline: none;
+  background: none;
+  padding: 0.5rem 1rem;
+  margin-bottom: 2rem;
+  width: 300px;
+  color: #fff;
+}
+
+.status-sort {
+  outline: none;
+  background: none;
+  padding: 0.5rem 1rem;
   margin-bottom: 2rem;
   width: 300px;
   color: #fff;
@@ -74,8 +132,6 @@ h1 {
   margin-bottom: 1rem;
 }
 
-
-
 .selectdate-btn {
   background: #df1e8f;
   color: #fff;
@@ -91,8 +147,8 @@ h1 {
   border: none;
   padding: 0.55rem;
   cursor: pointer;
-}
 
+}
 
 
 .Todo {
@@ -128,6 +184,15 @@ h1 {
   padding: 0.55rem;
   cursor: pointer;
 }
+
+.descript-btn{
+  background: #ebbe0a;
+  color: #fff;
+  border: none;
+  padding: 0.55rem;
+  cursor: pointer;
+}
+
 
 .delete-btn {
   background: #ef170f;
